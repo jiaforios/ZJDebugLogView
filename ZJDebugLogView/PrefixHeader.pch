@@ -1,0 +1,20 @@
+//
+//  PrefixHeader.pch
+//  ZJDebugLogView
+//
+//  Created by foscom on 16/7/14.
+//  Copyright © 2016年 zengjia. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+
+//#define NSLog(format, ...) do {                                             \
+//  fprintf(stderr, "<%s : %d> %s\n",                                       \
+//  [[[NSString stringWithUTF8String:__FILE__] lastPathComponent] UTF8String],  \
+//  __LINE__, __func__);                                                         \
+//   (NSLog)((format), ##__VA_ARGS__);                                           \
+//} while (0)
+
+#endif /* PrefixHeader_pch */
