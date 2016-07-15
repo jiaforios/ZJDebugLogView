@@ -4,16 +4,12 @@
 
 
 0. 在全局头文件中（.pch 文件） 中重新宏定义 NSLog
-
-
-: #define NSLog(format, ...) do {   \
-   (NSLog)((format), ##__VA_ARGS__);  \
-   dispatch_async(dispatch_get_main_queue(), ^{  \
-   [[NSNotificationCenter defaultCenter] postNotificationName:@"LOGNOTIFICATION" object:nil]; \
-   });\
-} while (0)
-
-
+       #define NSLog(format, ...) do {   \
+        (NSLog)((format), ##__VA_ARGS__);  \
+        dispatch_async(dispatch_get_main_queue(), ^{  \
+         [[NSNotificationCenter defaultCenter] postNotificationName:@"LOGNOTIFICATION" object:nil]; \
+        });\
+       } while (0)
 
 1. 在 main.m 文件中#import "ZJLogManger.h"并实现重定向方法 [ZJLogManger shareManger];
 
@@ -30,10 +26,8 @@
 5.  - (void) dismissDebugView 隐藏调试框
 
 
-
-
-注意事项：重定向之后，如果连接Xcode 或者模拟器调试将看不到常规输出日志，可以在 ZJLogManger 中将        self.XcodeOutput = self.SimulatorOutput = YES 就可正常显示但是不会继续重定向
-
+注意事项：重定向之后，如果连接Xcode 或者模拟器调试将看不到常规输出日志，可以在 ZJLogManger 中将    
+self.XcodeOutput = self.SimulatorOutput = YES 就可正常显示但是不会继续重定向
 
 
 
