@@ -112,15 +112,15 @@
     CGContextDrawPath(context, kCGPathFillStroke);
 }
 #pragma mark - popView
-- (void)popView
+- (void)popViewInView:(UIView *)view
 {
     // 同步显示 子控件(views)和(self)
     NSArray *results = [self.backGoundView subviews];
     for (UIView *view in results) {
         [view setHidden:YES];
     }
-    UIWindow *windowView = [UIApplication sharedApplication].keyWindow;
-    [windowView addSubview:self];
+//    UIWindow *windowView = [UIApplication sharedApplication].keyWindow;
+    [view addSubview:self];
     switch (self.type) {
         case XTTypeOfUpLeft: {
             {

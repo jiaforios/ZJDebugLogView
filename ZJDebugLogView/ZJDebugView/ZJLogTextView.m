@@ -18,13 +18,14 @@
 @property(nonatomic, strong) UIButton *bigBtn;
 @property(nonatomic, strong) UIButton *cancelBtn;
 @property(nonatomic, strong) UITextView *logTextView;
+@property(nonatomic, strong) UIButton *lineMarkBtn;
+@property(nonatomic, strong) UIStepper *step;
 @property(nonatomic, assign) CGFloat currentScale;
 @property(nonatomic, strong) GetLogFile *fieGet;
 @property(nonatomic, copy)   NSString *logPath;
 @property(nonatomic, assign) BOOL bDrag;
 @property(nonatomic, assign) CGRect customFrame;
-@property(nonatomic,strong)  UIButton *lineMarkBtn;
-
+@property(nonatomic,strong) dispatch_queue_t logQueue;
 @end
 
 @implementation ZJLogTextView
@@ -38,7 +39,6 @@ static ZJLogTextView *manger = nil;
         manger = [[ZJLogTextView alloc] initWithFrame:CGRectMake(50, 20, 320, 400)];
         dispatch_async(dispatch_get_main_queue(), ^{
             [[UIApplication sharedApplication].keyWindow addSubview:manger];
- 
         });
         
         manger.hidden = YES;
@@ -63,34 +63,46 @@ static ZJLogTextView *manger = nil;
         [self.controlView addSubview:self.bigBtn];
         [self.controlView addSubview:self.smallBtn];
         [self.controlView addSubview:self.lineMarkBtn];
+        [self.controlView addSubview:self.step];
         [self addSubview:self.controlView];
         [self addSubview:self.logTextView];
+        
         _currentScale = 1.0;
 
+        _logQueue = dispatch_queue_create("logqueue", DISPATCH_QUEUE_SERIAL);
         UIPinchGestureRecognizer* pinGesture = [[UIPinchGestureRecognizer alloc]
                                              initWithTarget:self action:@selector(scaleTextView:)];
         [self addGestureRecognizer:pinGesture];
         
          _fieGet = [[GetLogFile alloc] init];
-        [_fieGet getLogFileData:^(NSString *logDataStr, NSString *filepath) {
-            
-            _logPath = filepath;
-            
-        }];
         
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logNotification) name:@"LOGNOTIFICATION" object:nil];
-        
-        [_fieGet getLogFileData:^(NSString *logDataStr,NSString *filepath) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logNotification) name:@"LOGNOTIFICATION" object:nil];
+          [_fieGet getLogFileData:^(NSString *logDataStr,NSString *filepath) {
             _logPath = filepath;
-        }];
+              
+          }];
+        
+        
+        
     }
     return self;
 }
 
+
+
 - (void)getLogFile
 {
-    _logTextView.text = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:_logPath] encoding:NSUTF8StringEncoding];
+   dispatch_async(_logQueue, ^{
+     
+     dispatch_async(dispatch_get_main_queue(), ^{
+         _logTextView.text = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:_logPath] encoding:NSUTF8StringEncoding];
+     });
+
+ });
+    
+    
 }
+
 
 - (void)showDebugView
 {
@@ -225,6 +237,30 @@ static ZJLogTextView *manger = nil;
     return _cancelBtn;
 }
 
+- (UIStepper *)step
+{
+    if (_step == nil) {
+        _step = [[UIStepper alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_lineMarkBtn.frame)+10, 0, 20, BUTTON_HIGHT)];
+        
+        _step.minimumValue = 5.0f;
+        _step.maximumValue = 30.0f;
+        _step.value = 10;
+    }
+    
+    [_step addTarget:self action:@selector(changeFont:) forControlEvents:UIControlEventValueChanged];
+    
+    
+    return _step;
+}
+
+
+- (void)changeFont:(UIStepper *)sender
+{
+
+    _logTextView.font = [UIFont systemFontOfSize:sender.value];
+
+}
+
 - (void)cancelLogViewShow:(UIButton *)sender
 {
     NSLog(@"cancel");
@@ -250,7 +286,7 @@ static ZJLogTextView *manger = nil;
 
 - (void)lineMarkShow:(UIButton*)sender
 {
-    CGPoint point = CGPointMake(sender.center.x+50,sender.frame.origin.y+50);
+    CGPoint point = CGPointMake(sender.center.x,sender.frame.origin.y+BUTTON_HIGHT);
     
     XTPopView *view1 = [[XTPopView alloc] initWithOrigin:point Width:130 Height:40 * 4 Type:XTTypeOfUpCenter Color:[UIColor colorWithRed:0.2737 green:0.2737 blue:0.2737 alpha:1.0]];
     view1.dataArray = @[@"-------------",
@@ -261,7 +297,7 @@ static ZJLogTextView *manger = nil;
     view1.row_height = 40;
     view1.titleTextColor = [UIColor whiteColor];
     view1.delegate = self;
-    [view1 popView];
+    [view1 popViewInView:self];
 }
 - (void)selectIndexPathRow:(NSInteger)index
 {

@@ -8,8 +8,15 @@
 
 #import "ViewController.h"
 #import "ZJLogTextView.h"
+
+#define ddlog(s,...) do { \
+    NSLog(s, ##__VA_ARGS__);\
+}while(0)
+
 @interface ViewController ()
+
 @property(nonatomic,strong)ZJLogTextView *manger;
+
 @end
 
 @implementation ViewController
@@ -18,29 +25,14 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-   _manger =  [ZJLogTextView addDebugView];
-    
+    _manger = [ZJLogTextView addDebugView];
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     btn.frame = CGRectMake(100, 450, 100, 50);
     [btn setTitle:@"显示调试框" forState:UIControlStateNormal];
     btn.backgroundColor = [UIColor blueColor];
     [btn addTarget:self action:@selector(showLogView:) forControlEvents:UIControlEventTouchUpInside];
-    
     [self.view addSubview:btn];
-    
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        
-       
-        while (1) {
-                NSLog(@"400");
-            usleep(100*1000);
-        }
-    });
-    
-    
 }
-
 
 - (void)showLogView:(UIButton *)sender
 {
