@@ -36,15 +36,15 @@
 - (void)redirectNSlogToDocumentFolder
 {
 //     如果已经连接Xcode调试则不输出到文件
-    if(isatty(STDOUT_FILENO) && !_XcodeOutput) {
-        return;
-    }
-    
-    UIDevice *device = [UIDevice currentDevice];
-    
-    if([[device model] hasSuffix:@"Simulator"] && !_SimulatorOutput){ //在模拟器不保存到文件中
-        return;
-    }
+//    if(isatty(STDOUT_FILENO) && !_XcodeOutput) {
+//        return;
+//    }
+//    
+//    UIDevice *device = [UIDevice currentDevice];
+//    
+//    if([[device model] hasSuffix:@"Simulator"] && !_SimulatorOutput){ //在模拟器不保存到文件中
+//        return;
+//    }
     //将NSlog打印信息保存到Document目录下的Log文件夹下
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *logDirectory = [[paths objectAtIndex:0] stringByAppendingPathComponent:@"Log"];

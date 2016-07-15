@@ -21,7 +21,6 @@
 @property(nonatomic, assign) CGFloat currentScale;
 @property(nonatomic, strong) GetLogFile *fieGet;
 @property(nonatomic, copy)   NSString *logPath;
-@property(nonatomic, strong) NSTimer *timer;
 @property(nonatomic, assign) BOOL bDrag;
 @property(nonatomic, assign) CGRect customFrame;
 @property(nonatomic,strong)  UIButton *lineMarkBtn;
@@ -39,13 +38,19 @@ static ZJLogTextView *manger = nil;
         manger = [[ZJLogTextView alloc] initWithFrame:CGRectMake(50, 20, 320, 400)];
         dispatch_async(dispatch_get_main_queue(), ^{
             [[UIApplication sharedApplication].keyWindow addSubview:manger];
-            
+ 
         });
         
         manger.hidden = YES;
     });
     
     return manger;
+}
+
+
+- (void)logNotification
+{
+    [self getLogFile];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -72,11 +77,11 @@ static ZJLogTextView *manger = nil;
             _logPath = filepath;
             
         }];
-         _timer = [NSTimer scheduledTimerWithTimeInterval:0.3 target:self selector:@selector(getLogFile) userInfo:nil repeats:YES];
+        
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logNotification) name:@"LOGNOTIFICATION" object:nil];
         
         [_fieGet getLogFileData:^(NSString *logDataStr,NSString *filepath) {
             _logPath = filepath;
-            
         }];
     }
     return self;
@@ -85,22 +90,16 @@ static ZJLogTextView *manger = nil;
 - (void)getLogFile
 {
     _logTextView.text = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:_logPath] encoding:NSUTF8StringEncoding];
-
 }
 
 - (void)showDebugView
 {
-    if (_timer == nil) {
-        _timer = [NSTimer scheduledTimerWithTimeInterval:0.3 target:self selector:@selector(getLogFile) userInfo:nil repeats:YES];
-    }
     manger.hidden = NO;
     manger.logTextView.text = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:manger.logPath] encoding:NSUTF8StringEncoding];
-    [manger.timer setFireDate:[NSDate date]];
 }
 
 - (void)dismissDebugView
 {
-    [manger.timer setFireDate:[NSDate distantFuture]];
     manger.hidden = YES;
     manger.logTextView.text = @"";
 
@@ -228,10 +227,7 @@ static ZJLogTextView *manger = nil;
 
 - (void)cancelLogViewShow:(UIButton *)sender
 {
-    // 点击取消 销毁定时器，清空内存
     NSLog(@"cancel");
-    [_timer invalidate];
-    _timer = nil;
     _logTextView.text = @"";
     manger.hidden = YES;
     
@@ -240,18 +236,13 @@ static ZJLogTextView *manger = nil;
 - (void)bigLogViewShow:(UIButton *)sender
 {
     NSLog(@"big");
-    // 恢复定时器
-    [_timer setFireDate:[NSDate date]];
-    
     self.frame = _customFrame;
     
 }
 - (void)smallLogViewShow:(UIButton *)sender
 {
     // 最小化时 暂停计时器 降低CPU
-    
-    [_timer setFireDate:[NSDate distantFuture]];
-  
+      
     self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, BUTTON_HIGHT *3, BUTTON_HIGHT);
 
     NSLog(@"small");

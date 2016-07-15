@@ -32,7 +32,7 @@
 		75EEE2711D37297600B8B9E7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		75EEE2741D37297600B8B9E7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		75EEE2761D37297600B8B9E7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		75EEE2871D372A2400B8B9E7 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		75EEE2871D372A2400B8B9E7 /* ZJDebugLogView.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZJDebugLogView.pch; sourceTree = "<group>"; };
 		75EEE2891D372A8200B8B9E7 /* GetLogFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetLogFile.h; sourceTree = "<group>"; };
 		75EEE28A1D372A8200B8B9E7 /* GetLogFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GetLogFile.m; sourceTree = "<group>"; };
 		75EEE28B1D372A8200B8B9E7 /* LogImageSource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = LogImageSource.bundle; sourceTree = "<group>"; };
@@ -86,7 +86,7 @@
 				75EEE26E1D37297600B8B9E7 /* Main.storyboard */,
 				75EEE2711D37297600B8B9E7 /* Assets.xcassets */,
 				75EEE2731D37297600B8B9E7 /* LaunchScreen.storyboard */,
-				75EEE2871D372A2400B8B9E7 /* PrefixHeader.pch */,
+				75EEE2871D372A2400B8B9E7 /* ZJDebugLogView.pch */,
 				75EEE2761D37297600B8B9E7 /* Info.plist */,
 				75EEE2651D37297600B8B9E7 /* Supporting Files */,
 			);
@@ -307,6 +307,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/ZJDebugLogView/ZJDebugLogView.pch";
 				INFOPLIST_FILE = ZJDebugLogView/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zengjia.ZJDebugLogView;
@@ -318,6 +320,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/ZJDebugLogView/ZJDebugLogView.pch";
 				INFOPLIST_FILE = ZJDebugLogView/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zengjia.ZJDebugLogView;
@@ -344,6 +348,7 @@
 				75EEE27B1D37297600B8B9E7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -1,6 +1,19 @@
 实现方法：重定向NSLog 输出到本地 实现脱机下同样可以查看输出日志
 
 使用方法：
+0. 在全局头文件中（.pch 文件） 中重新宏定义 NSLog
+
+
+#define NSLog(format, ...) do {   \
+   (NSLog)((format), ##__VA_ARGS__);  \
+   dispatch_async(dispatch_get_main_queue(), ^{  \
+   [[NSNotificationCenter defaultCenter] postNotificationName:@"LOGNOTIFICATION" object:nil]; \
+   });\
+} while (0)
+
+
+
+
 1.在 main.m 文件中#import "ZJLogManger.h"并实现重定向方法 [ZJLogManger shareManger];
 
 
