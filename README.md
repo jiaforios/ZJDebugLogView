@@ -16,3 +16,7 @@
 5.  - (void) dismissDebugView 隐藏调试框
 
 
+
+
+注意事项：重定向之后，如果连接Xcode 或者模拟器调试将看不到常规输出日志，可以在 ZJLogManger 中将        self.XcodeOutput = self.SimulatorOutput = YES 就可正常显示但是不会继续重定向
+
