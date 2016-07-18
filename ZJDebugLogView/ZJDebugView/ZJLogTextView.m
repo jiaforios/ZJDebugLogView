@@ -100,9 +100,7 @@ static ZJLogTextView *manger = nil;
 
  });
     
-    
 }
-
 
 - (void)showDebugView
 {
@@ -263,7 +261,6 @@ static ZJLogTextView *manger = nil;
 
 - (void)cancelLogViewShow:(UIButton *)sender
 {
-    NSLog(@"cancel");
     _logTextView.text = @"";
     manger.hidden = YES;
     
@@ -271,17 +268,13 @@ static ZJLogTextView *manger = nil;
 
 - (void)bigLogViewShow:(UIButton *)sender
 {
-    NSLog(@"big");
     self.frame = _customFrame;
     
 }
 - (void)smallLogViewShow:(UIButton *)sender
 {
     // 最小化时 暂停计时器 降低CPU
-      
     self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, BUTTON_HIGHT *3, BUTTON_HIGHT);
-
-    NSLog(@"small");
 }
 
 - (void)lineMarkShow:(UIButton*)sender
