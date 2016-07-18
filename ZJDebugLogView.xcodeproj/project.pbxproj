@@ -310,6 +310,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/ZJDebugLogView/ZJDebugLogView.pch";
 				INFOPLIST_FILE = ZJDebugLogView/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zengjia.ZJDebugLogView;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -323,6 +324,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/ZJDebugLogView/ZJDebugLogView.pch";
 				INFOPLIST_FILE = ZJDebugLogView/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zengjia.ZJDebugLogView;
 				PRODUCT_NAME = "$(TARGET_NAME)";

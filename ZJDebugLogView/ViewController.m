@@ -52,7 +52,18 @@
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
-    NSLog(@"这是一条测试信息");
+    UIDevice *device = [UIDevice currentDevice];
+
+    if(isatty(STDOUT_FILENO)|| [[device model] hasSuffix:@"Simulator"]) {
+
+        NSLog(@"当前是连接Xcode 或者 模拟器调试，日志不输出到自定义的调试框");
+    }else
+    {
+        NSLog(@"这是一条测试信息");
+
+    }
+    
+    
 }
 
 - (void)didReceiveMemoryWarning {

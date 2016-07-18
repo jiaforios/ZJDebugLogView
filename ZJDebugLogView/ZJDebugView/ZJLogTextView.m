@@ -18,14 +18,19 @@
 @property(nonatomic, strong) UIButton *bigBtn;
 @property(nonatomic, strong) UIButton *cancelBtn;
 @property(nonatomic, strong) UITextView *logTextView;
-@property(nonatomic, strong) UIButton *lineMarkBtn;
-@property(nonatomic, strong) UIStepper *step;
+@property(nonatomic, strong) UIButton *lineMarkBtn;  // 添加断位线
+@property(nonatomic, strong) UIStepper *step;       //文字大小
+@property(nonatomic, strong) UIButton *clearBtn;    // 清空当前
+
+
 @property(nonatomic, assign) CGFloat currentScale;
 @property(nonatomic, strong) GetLogFile *fieGet;
 @property(nonatomic, copy)   NSString *logPath;
 @property(nonatomic, assign) BOOL bDrag;
 @property(nonatomic, assign) CGRect customFrame;
 @property(nonatomic,strong) dispatch_queue_t logQueue;
+@property(nonatomic,strong) NSFileHandle *readFile;
+@property(nonatomic,assign) long long fileEndset;
 @end
 
 @implementation ZJLogTextView
@@ -58,12 +63,14 @@ static ZJLogTextView *manger = nil;
     if (self = [super initWithFrame:frame]) {
         _customFrame = frame;
         _bDrag = NO;
+        _fileEndset = 0;
         self.backgroundColor = [UIColor blackColor];
         [self.controlView addSubview:self.cancelBtn];
         [self.controlView addSubview:self.bigBtn];
         [self.controlView addSubview:self.smallBtn];
         [self.controlView addSubview:self.lineMarkBtn];
         [self.controlView addSubview:self.step];
+        [self.controlView addSubview:self.clearBtn];
         [self addSubview:self.controlView];
         [self addSubview:self.logTextView];
         
@@ -81,21 +88,24 @@ static ZJLogTextView *manger = nil;
             _logPath = filepath;
               
           }];
-        
-        
-        
     }
     return self;
 }
 
-
-
 - (void)getLogFile
 {
    dispatch_async(_logQueue, ^{
-     
      dispatch_async(dispatch_get_main_queue(), ^{
-         _logTextView.text = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:_logPath] encoding:NSUTF8StringEncoding];
+         
+
+         if (_fileEndset == 0) {
+             _logTextView.text = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:_logPath] encoding:NSUTF8StringEncoding];
+         }else
+         {
+             [_readFile seekToFileOffset:_fileEndset]; // 如果有清除处理，将指针先移到上次清除位置点
+            _logTextView.text = [[NSString alloc] initWithData:[_readFile readDataToEndOfFile] encoding:NSUTF8StringEncoding];
+
+         }
      });
 
  });
@@ -105,7 +115,13 @@ static ZJLogTextView *manger = nil;
 - (void)showDebugView
 {
     manger.hidden = NO;
-    manger.logTextView.text = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:manger.logPath] encoding:NSUTF8StringEncoding];
+    if (_fileEndset == 0) {
+        manger.logTextView.text = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:manger.logPath] encoding:NSUTF8StringEncoding];
+    }else
+    {
+        [_readFile seekToFileOffset:_fileEndset];
+        manger.logTextView.text = [[NSString alloc] initWithData:[_readFile readDataToEndOfFile] encoding:NSUTF8StringEncoding];
+    }
 }
 
 - (void)dismissDebugView
@@ -235,6 +251,17 @@ static ZJLogTextView *manger = nil;
     return _cancelBtn;
 }
 
+- (UIButton *)clearBtn
+{
+    if (_clearBtn == nil) {
+        _clearBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [_clearBtn setTitle:@"清屏" forState:UIControlStateNormal];
+        _clearBtn.frame = CGRectMake(CGRectGetMaxX(_step.frame), 0, 40, BUTTON_HIGHT);
+    }
+    _clearBtn.titleLabel.font = [UIFont systemFontOfSize:10];
+    [_clearBtn addTarget:self action:@selector(clearScreen:) forControlEvents:UIControlEventTouchUpInside];
+    return _clearBtn;
+}
 - (UIStepper *)step
 {
     if (_step == nil) {
@@ -247,11 +274,20 @@ static ZJLogTextView *manger = nil;
     
     [_step addTarget:self action:@selector(changeFont:) forControlEvents:UIControlEventValueChanged];
     
-    
     return _step;
 }
 
 
+- (void)clearScreen:(UIButton *)sender
+{
+    // 清空当前显示内容 记录文件指针偏移位置
+    _logTextView.text = @"";
+    _readFile = [NSFileHandle fileHandleForReadingAtPath:_logPath];
+    long long fileLength = [[_readFile availableData] length];
+    _fileEndset = fileLength;
+    
+    
+}
 - (void)changeFont:(UIStepper *)sender
 {
 
