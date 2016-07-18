@@ -28,8 +28,3 @@
 
 注意事项：重定向之后，如果连接Xcode 或者模拟器调试将看不到常规输出日志，可以在 ZJLogManger 中将    
 self.XcodeOutput = self.SimulatorOutput = YES 就可正常显示但是不会继续重定向
-
-
-
-猜想优化措施：
-当前实现是实时通知NSLog 事件， 这种方式经常读取本地文件，cpu 暂用率高，设法在nslog内容写入文件之前就能拿到值 并输出
